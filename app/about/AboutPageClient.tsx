@@ -417,7 +417,7 @@ export default function AboutPageClient() {
                   </div>
                   <div className="aspect-square overflow-hidden rounded-2xl shadow-xl">
                     <Image
-                      src="/jr-sapkota.jpg"
+                      src="/hero-image.jpg"
                       alt="Founder"
                       width={600}
                       height={600}
@@ -564,7 +564,7 @@ export default function AboutPageClient() {
           </div>
         </section>
 
-        {/* Infrastructure - Secondary Background */}
+        {/* Facilities Section */}
         <section className="py-16 md:py-20 lg:py-24 bg-primary-section">
           <div className="container mx-auto px-6">
             <motion.div
@@ -582,25 +582,21 @@ export default function AboutPageClient() {
                 development
               </p>
             </motion.div>
-
-            <motion.div
-              className="space-y-16"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
+            <div className="space-y-16">
               {facilities.map((facility, index) => {
                 const isEven = index % 2 === 0;
                 return (
                   <motion.div
                     key={facility.title}
                     variants={itemVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
                     className={`flex flex-col md:flex-row ${
                       isEven ? "" : "md:flex-row-reverse"
                     } items-center gap-10 md:gap-16`}
                   >
-                    {/* Image/Icon in shape */}
+                    {/* Image/Illustration */}
                     <div className="w-full md:w-1/2 flex justify-center">
                       <div
                         style={{
@@ -613,34 +609,37 @@ export default function AboutPageClient() {
                           borderRadius: "40px",
                           background: "#eee",
                         }}
-                        className={`bg-white flex items-center justify-center`}
+                        className={`bg-white flex items-center justify-center relative`}
                       >
+                        {/* You can replace this icon with an actual image if you have one for each facility */}
                         <facility.icon
-                          className="h-40 w-40 text-white"
-                          style={{ color: "white" }}
+                          className="h-40 w-40 text-white opacity-30 absolute inset-0 m-auto"
+                          style={{ color: "white", zIndex: 1 }}
                         />
+                        {/* Example: If you have an image, use <Image src={facility.image} ... /> here */}
+                        {/* Icon in a circle below the image */}
                       </div>
                     </div>
                     {/* Card Content */}
-                    <div className="w-full md:w-1/2">
-                      <Card className="h-full hover:shadow-xl transition-all duration-500 hover-lift group card-secondary">
-                        <CardContent className="p-8 text-center md:text-left flex items-center gap-4">
-                          <facility.icon className="h-12 w-12 text-primary mr-4 flex-shrink-0" />
-                          <div>
-                            <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center">
-                              {facility.title}
-                            </h3>
-                            <p className="text-muted-foreground leading-relaxed text-lg">
-                              {facility.description}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
+                    <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                      {/* Icon in a circle below the image and above the title */}
+                      <div
+                        className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facility.iconBg}`}
+                        style={{ zIndex: 2 }}
+                      >
+                        <facility.icon className="w-7 h-7 text-white" />
+                      </div>
+                      <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                        {facility.title}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                        {facility.description}
+                      </p>
                     </div>
                   </motion.div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
         </section>
       </main>

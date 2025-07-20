@@ -351,24 +351,22 @@ export default function ParentsPage() {
                   )}
                 </div>
               </motion.div>
-
+              {/* Center the image on mobile */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className="relative"
+                className="flex justify-center items-center w-full"
               >
-                <div className="relative w-full max-w-md mx-auto">
-                  <img
-                    src="https://play-lh.googleusercontent.com/AnqAd5FkNC6jxVcBd8ZLXwFPgopbQlkkiurMRadm8bad0YsYSq5hBXXqj-3mPGuSjw=w5120-h2880-rw"
-                    alt="Manahara School Mobile App"
-                    width={300}
-                    height={600}
-                    className="rounded-3xl shadow-2xl"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-3xl" />
-                </div>
+                {/* Assuming the image is here, add mx-auto if not already present */}
+                <Image
+                  src="/your-app-image.png" // replace with actual image src
+                  alt="Manahara School Mobile App Preview"
+                  width={320}
+                  height={600}
+                  className="mx-auto rounded-xl shadow-lg"
+                />
               </motion.div>
             </div>
           </div>
