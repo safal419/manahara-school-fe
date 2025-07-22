@@ -16,8 +16,6 @@ export async function fetchNews() {
   return data;
 }
 
-
-
 export async function fetchNewsBySlug(slug: string) {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   if (!baseUrl) throw new Error('Backend URL is not set in environment variables');
@@ -36,13 +34,20 @@ export async function fetchEvents() {
   return data;
 }
 
-
-
 export async function fetchGallery() {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   if (!baseUrl) throw new Error('Backend URL is not set in environment variables');
   const res = await fetch(`${baseUrl}/api/galleries?populate=*`);
   if (!res.ok) throw new Error('Failed to fetch news');
+  const data = await res.json();
+  return data;
+}
+
+export async function fetchHome() {
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  if (!baseUrl) throw new Error('Backend URL is not set in environment variables');
+  const res = await fetch(`${baseUrl}/api/home?populate=*`);
+  if (!res.ok) throw new Error('Failed to fetch home data');
   const data = await res.json();
   return data;
 }

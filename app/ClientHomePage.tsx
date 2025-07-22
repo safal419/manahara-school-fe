@@ -12,11 +12,13 @@ import { GalleryPreviewSection } from "@/components/sections/gallery-preview-sec
 import { UpcomingEventsSection } from "@/components/sections/upcoming-events-section";
 import { FloatingActionButton } from "@/components/ui/floating-action-button";
 import { useEffect, useState } from "react";
-import { fetchEvents } from "@/lib/api";
+import { fetchHome, fetchEvents } from "@/lib/api";
 
 export default function ClientHomePage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
+  const [homeData, setHomeData] = useState<any>(null);
+  const [loadingHome, setLoadingHome] = useState(true);
 
   useEffect(() => {
     fetchEvents()
@@ -25,27 +27,56 @@ export default function ClientHomePage() {
         setLoadingEvents(false);
       })
       .catch(() => setLoadingEvents(false));
+    fetchHome()
+      .then((data) => {
+        setHomeData(data.data);
+        setLoadingHome(false);
+      })
+      .catch(() => setLoadingHome(false));
   }, []);
+
+  function getImageUrl(imageObj: any) {
+    if (!imageObj) return "";
+    const formats = imageObj.formats || {};
+    return formats.medium?.url || formats.small?.url || imageObj.url || "";
+  }
+
+  const heroImageUrl = getImageUrl(homeData?.heroImage);
+  const missionImageUrl = getImageUrl(homeData?.missionImage);
+  const visionImageUrl = getImageUrl(homeData?.visionImage);
+  const valuesImageUrl = getImageUrl(homeData?.valuesImage);
 
   return (
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* CMS Integration: All section data should come from CMS */}
-        <HeroSection />
-        <MissionVisionSection />
-        <GuidingPrinciplesSection />
-        <CoreValuesSection />
-        <HighlightsSection />
-        <AchievementsSection />
-        <TestimonialsSection />
-        <GalleryPreviewSection />
-        {loadingEvents ? (
+        {/* Loader for home data */}
+        {loadingHome ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <UpcomingEventsSection events={events} />
+          <>
+            <HeroSection imageUrl={heroImageUrl} />
+            <MissionVisionSection
+              missionImageUrl={missionImageUrl}
+              visionImageUrl={visionImageUrl}
+              valuesImageUrl={valuesImageUrl}
+            />
+            <GuidingPrinciplesSection />
+            <CoreValuesSection />
+            <HighlightsSection />
+            <AchievementsSection />
+            <TestimonialsSection />
+            <GalleryPreviewSection />
+            {loadingEvents ? (
+              <div className="flex justify-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <UpcomingEventsSection events={events} />
+            )}
+          </>
         )}
       </main>
       <Footer />

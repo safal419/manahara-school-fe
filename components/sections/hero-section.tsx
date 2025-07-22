@@ -7,7 +7,7 @@ import Image from "next/image";
 import { ArrowRight, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function HeroSection() {
+export function HeroSection({ imageUrl }: { imageUrl: string }) {
   const [animatedDots, setAnimatedDots] = useState<Array<{
     left: string;
     top: string;
@@ -31,7 +31,7 @@ export function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/hero-image.jpg"
+          src={imageUrl}
           alt="Children learning at Manahara School"
           fill
           className="object-cover"

@@ -28,7 +28,15 @@ const items = [
   },
 ];
 
-export function MissionVisionSection() {
+export function MissionVisionSection({
+  missionImageUrl,
+  visionImageUrl,
+  valuesImageUrl,
+}: {
+  missionImageUrl: string;
+  visionImageUrl: string;
+  valuesImageUrl: string;
+}) {
   return (
     <section className="py-12 px-4 md:py-16 lg:py-20 bg-primary-section">
       <div className="container mx-auto">
@@ -94,7 +102,7 @@ export function MissionVisionSection() {
               }}
             >
               <img
-                src="/students-sting.jpg"
+                src={missionImageUrl}
                 alt="Mission"
                 className="w-full h-full object-cover"
                 style={{ display: "block" }}
@@ -149,7 +157,7 @@ export function MissionVisionSection() {
               }}
             >
               <img
-                src="/sports-day.jpg"
+                src={visionImageUrl}
                 alt="Vision"
                 className="w-full h-full object-cover"
                 style={{ display: "block" }}
@@ -203,7 +211,7 @@ export function MissionVisionSection() {
               }}
             >
               <img
-                src="/cultural-program.jpg"
+                src={valuesImageUrl}
                 alt="Values"
                 className="w-full h-full object-cover"
                 style={{ display: "block" }}
