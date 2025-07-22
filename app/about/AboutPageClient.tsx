@@ -68,31 +68,6 @@ const facilities = [
   },
 ];
 
-// CMS Integration: Team data should come from CMS
-const team = [
-  {
-    name: "Mr. J.R. Sapkota",
-    position: "Founder",
-    qualification: "M.Ed in Educational Leadership",
-    experience: "10 years",
-    image: "/jr-sapkota.jpg",
-  },
-  {
-    name: "Ms. Gauri Phuyal",
-    position: "Academic Coordinator",
-    qualification: "M.Ed in Curriculum and Instruction",
-    experience: "5 years",
-    image: "/placeholder.svg?height=150&width=150",
-  },
-  {
-    name: "Ms. Anjana Sharma",
-    position: "Grade 2 Teacher",
-    qualification: "B.Ed in Primary Education",
-    experience: "7 years",
-    image: "/placeholder.svg?height=150&width=150",
-  },
-];
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -616,8 +591,6 @@ export default function AboutPageClient() {
                           className="h-40 w-40 text-white opacity-30 absolute inset-0 m-auto"
                           style={{ color: "white", zIndex: 1 }}
                         />
-                        {/* Example: If you have an image, use <Image src={facility.image} ... /> here */}
-                        {/* Icon in a circle below the image */}
                       </div>
                     </div>
                     {/* Card Content */}

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { X, ZoomIn, Download, Share2, Heart, Filter } from "lucide-react";
+import { fetchGallery } from "@/lib/api";
 
 const categories = [
   "All",
@@ -20,115 +21,62 @@ const categories = [
   "Celebrations",
 ];
 
-const galleryImages = [
-  {
-    id: 1,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Montessori Learning Activity",
-    category: "Classroom",
-    title: "Montessori Learning",
-    description: "Students engaged in hands-on Montessori learning activities",
-  },
-  {
-    id: 2,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Annual Sports Day",
-    category: "Sports",
-    title: "Sports Day 2024",
-    description: "Students participating in various sports activities",
-  },
-  {
-    id: 3,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Cultural Program",
-    category: "Cultural",
-    title: "Cultural Celebration",
-    description: "Traditional dance performance by our students",
-  },
-  {
-    id: 4,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Science Exhibition",
-    category: "Events",
-    title: "Science Fair",
-    description: "Young scientists showcasing their projects",
-  },
-  {
-    id: 5,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Art and Craft Workshop",
-    category: "Classroom",
-    title: "Art Workshop",
-    description: "Creative minds at work during art class",
-  },
-  {
-    id: 6,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Field Trip",
-    category: "Trips",
-    title: "Educational Trip",
-    description: "Students exploring the national museum",
-  },
-  {
-    id: 7,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Birthday Celebration",
-    category: "Celebrations",
-    title: "Birthday Party",
-    description: "Celebrating student birthdays together",
-  },
-  {
-    id: 8,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Reading Corner",
-    category: "Classroom",
-    title: "Library Time",
-    description: "Students enjoying reading in our library corner",
-  },
-  {
-    id: 9,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Graduation Ceremony",
-    category: "Events",
-    title: "Graduation Day",
-    description: "Proud graduates with their certificates",
-  },
-  {
-    id: 10,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Music Class",
-    category: "Cultural",
-    title: "Music Lesson",
-    description: "Learning traditional Nepali songs",
-  },
-  {
-    id: 11,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Outdoor Play",
-    category: "Sports",
-    title: "Playground Fun",
-    description: "Children enjoying outdoor activities",
-  },
-  {
-    id: 12,
-    src: "/placeholder.svg?height=400&width=600",
-    alt: "Parent Meeting",
-    category: "Events",
-    title: "Parent-Teacher Meeting",
-    description: "Important discussions about student progress",
-  },
-];
-
 export default function GalleryPage() {
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedImage, setSelectedImage] = useState<
-    (typeof galleryImages)[0] | null
-  >(null);
+  const [selectedImage, setSelectedImage] = useState<any | null>(null);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true); // Loader state
 
   // Scroll to top when component mounts
   useEffect(() => {
+    setLoading(true); // Start loading
     window.scrollTo(0, 0);
+    fetchGallery()
+      .then((data) => {
+        const images = (data.data || []).map((item: any) => {
+          // Try all possible image array locations
+          let imageArray = [];
+          if (Array.isArray(item.image)) {
+            imageArray = item.image;
+          } else if (Array.isArray(item.image?.data)) {
+            imageArray = item.image.data;
+          } else if (Array.isArray(item.attributes?.image?.data)) {
+            imageArray = item.attributes.image.data;
+          }
+          return {
+            id: item.id,
+            title: item.title || item.attributes?.title,
+            description: item.description || item.attributes?.description,
+            category: item.category || item.attributes?.category,
+            images: imageArray.map((img: any) => {
+              const formats = img.formats || img.attributes?.formats || {};
+              const url =
+                formats.medium?.url ||
+                formats.small?.url ||
+                img.url ||
+                img.attributes?.url;
+              const alt =
+                img.alternativeText ||
+                img.caption ||
+                img.attributes?.alternativeText ||
+                img.attributes?.caption ||
+                item.alt ||
+                item.attributes?.alt ||
+                item.title ||
+                item.attributes?.title;
+              return { src: url, alt };
+            }),
+          };
+        });
+        setGalleryImages(images);
+        setLoading(false); // End loading
+      })
+      .catch(() => {
+        setGalleryImages([]);
+        setLoading(false); // End loading on error
+      });
   }, []);
 
   const filteredImages =
@@ -241,58 +189,72 @@ export default function GalleryPage() {
         {/* Gallery Grid */}
         <section className="py-12 md:py-20 bg-primary-section">
           <div className="container mx-auto px-4">
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
-              layout
-            >
-              <AnimatePresence>
-                {filteredImages.map((image, index) => (
-                  <motion.div
-                    key={image.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    whileHover={{ y: -5 }}
-                    className="group cursor-pointer"
-                    onClick={() => setSelectedImage(image)}
-                  >
-                    <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
-                      <Image
-                        src={image.src || "/placeholder.svg"}
-                        alt={image.alt}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
-                        <motion.div
-                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          whileHover={{ scale: 1.1 }}
-                        >
-                          <ZoomIn className="h-6 w-6 md:h-8 md:w-8 text-white" />
-                        </motion.div>
+            {loading ? (
+              <main className="flex-grow flex items-center  justify-center">
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin"></div>
+                  <p className="text-lg font-medium text-gray-700 animate-pulse">
+                    Loading, please wait...
+                  </p>
+                </div>
+              </main>
+            ) : (
+              <motion.div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+                layout
+              >
+                <AnimatePresence>
+                  {filteredImages.map((image, index) => (
+                    <motion.div
+                      key={image.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      whileHover={{ y: -5 }}
+                      className="group cursor-pointer"
+                      onClick={() => {
+                        setSelectedImage(image);
+                        setCurrentImageIdx(0);
+                      }}
+                    >
+                      <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
+                        <Image
+                          src={image.images[0]?.src || "/placeholder.svg"}
+                          alt={image.images[0]?.alt || image.title}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                          <motion.div
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            whileHover={{ scale: 1.1 }}
+                          >
+                            <ZoomIn className="h-6 w-6 md:h-8 md:w-8 text-white" />
+                          </motion.div>
+                        </div>
+                        <div className="absolute top-2 left-2">
+                          <Badge variant="secondary" className="text-xs">
+                            {image.category}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="absolute top-2 left-2">
-                        <Badge variant="secondary" className="text-xs">
-                          {image.category}
-                        </Badge>
+                      <div className="mt-3 px-1">
+                        <h3 className="font-medium text-sm md:text-base group-hover:text-primary transition-colors">
+                          {image.title}
+                        </h3>
+                        <p className="text-xs md:text-sm text-muted-foreground mt-1 line-clamp-2">
+                          {image.description}
+                        </p>
                       </div>
-                    </div>
-                    <div className="mt-3 px-1">
-                      <h3 className="font-medium text-sm md:text-base group-hover:text-primary transition-colors">
-                        {image.title}
-                      </h3>
-                      <p className="text-xs md:text-sm text-muted-foreground mt-1 line-clamp-2">
-                        {image.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
 
-            {filteredImages.length === 0 && (
+            {!loading && filteredImages.length === 0 && (
               <motion.div
                 className="text-center py-12"
                 initial={{ opacity: 0 }}
@@ -324,21 +286,58 @@ export default function GalleryPage() {
                 exit={{ scale: 0.8, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
               >
+                {/* Navigation Buttons using real <button> */}
+                {selectedImage.images.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/20 p-2 rounded-full z-10"
+                      onClick={() =>
+                        setCurrentImageIdx((prevIdx) =>
+                          prevIdx > 0
+                            ? prevIdx - 1
+                            : selectedImage.images.length - 1
+                        )
+                      }
+                    >
+                      {"<"}
+                    </button>
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-white/10 hover:bg-white/20 p-2 rounded-full z-10"
+                      onClick={() =>
+                        setCurrentImageIdx((prevIdx) =>
+                          prevIdx < selectedImage.images.length - 1
+                            ? prevIdx + 1
+                            : 0
+                        )
+                      }
+                    >
+                      {">"}
+                    </button>
+                  </>
+                )}
+
                 {/* Close Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute -top-12 right-0 text-white hover:bg-white/20 z-10"
+                <button
+                  type="button"
+                  className="absolute -top-12 right-0 text-white hover:bg-white/20 z-10 p-2"
                   onClick={() => setSelectedImage(null)}
                 >
-                  <X className="h-5 w-5 md:h-6 md:w-6" />
-                </Button>
+                  <X className="h-6 w-6" />
+                </button>
 
-                {/* Image */}
+                {/* Current Image */}
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                   <Image
-                    src={selectedImage.src || "/placeholder.svg"}
-                    alt={selectedImage.alt}
+                    src={
+                      selectedImage.images[currentImageIdx]?.src ||
+                      "/placeholder.svg"
+                    }
+                    alt={
+                      selectedImage.images[currentImageIdx]?.alt ||
+                      selectedImage.title
+                    }
                     fill
                     className="object-contain"
                   />
@@ -354,32 +353,6 @@ export default function GalleryPage() {
                       <p className="text-sm md:text-base text-gray-300">
                         {selectedImage.description}
                       </p>
-                    </div>
-                    <div className="flex space-x-2 shrink-0">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs md:text-sm"
-                      >
-                        <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
-                        Like
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs md:text-sm"
-                      >
-                        <Download className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
-                        Download
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs md:text-sm"
-                      >
-                        <Share2 className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
-                        Share
-                      </Button>
                     </div>
                   </div>
                 </div>

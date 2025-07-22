@@ -94,12 +94,12 @@ const faqs = [
   {
     question: "What are the school timings?",
     answer:
-      "Our school operates Monday to Friday from 7:00 AM to 4:00 PM, and Saturday from 7:00 AM to 12:00 PM. Different grade levels may have slightly different timings, which will be communicated during admission.",
+      "Our school operates Sunday to Friday from 7:00 AM to 4:00 PM, and Saturday from 7:00 AM to 12:00 PM. Different grade levels may have slightly different timings, which will be communicated during admission.",
   },
   {
     question: "Do you provide transportation services?",
     answer:
-      "Currently, we do not provide school bus services. However, we can help connect parents with reliable transportation services in the area. Many parents also organize carpools for convenience.",
+      "Yes, we provide school transportation services through our own school van. Our goal is to ensure students travel safely and comfortably. For route details and availability, please contact our administration office.",
   },
   {
     question: "What is your fee structure?",
@@ -359,9 +359,8 @@ export default function ParentsPage() {
                 viewport={{ once: true }}
                 className="flex justify-center items-center w-full"
               >
-                {/* Assuming the image is here, add mx-auto if not already present */}
                 <Image
-                  src="/your-app-image.png" // replace with actual image src
+                  src="/manahara-app.webp" // replace with actual image src
                   alt="Manahara School Mobile App Preview"
                   width={320}
                   height={600}
