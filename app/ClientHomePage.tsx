@@ -13,6 +13,7 @@ import { UpcomingEventsSection } from "@/components/sections/upcoming-events-sec
 import { FloatingActionButton } from "@/components/ui/floating-action-button";
 import { useEffect, useState } from "react";
 import { fetchHome, fetchEvents } from "@/lib/api";
+import FirstLoadPopup from "@/components/FirstLoadPopup";
 
 export default function ClientHomePage() {
   const [events, setEvents] = useState<any[]>([]);
@@ -46,37 +47,38 @@ export default function ClientHomePage() {
   const visionImageUrl = getImageUrl(homeData?.visionImage);
   const valuesImageUrl = getImageUrl(homeData?.valuesImage);
 
+  if (loadingHome) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Header />
       <main>
-        {/* Loader for home data */}
-        {loadingHome ? (
+        <FirstLoadPopup show={true} />
+
+        <HeroSection imageUrl={heroImageUrl} />
+        <MissionVisionSection
+          missionImageUrl={missionImageUrl}
+          visionImageUrl={visionImageUrl}
+          valuesImageUrl={valuesImageUrl}
+        />
+        <GuidingPrinciplesSection />
+        <CoreValuesSection />
+        <HighlightsSection />
+        <AchievementsSection />
+        <TestimonialsSection />
+        <GalleryPreviewSection />
+        {loadingEvents ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <>
-            <HeroSection imageUrl={heroImageUrl} />
-            <MissionVisionSection
-              missionImageUrl={missionImageUrl}
-              visionImageUrl={visionImageUrl}
-              valuesImageUrl={valuesImageUrl}
-            />
-            <GuidingPrinciplesSection />
-            <CoreValuesSection />
-            <HighlightsSection />
-            <AchievementsSection />
-            <TestimonialsSection />
-            <GalleryPreviewSection />
-            {loadingEvents ? (
-              <div className="flex justify-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-              </div>
-            ) : (
-              <UpcomingEventsSection events={events} />
-            )}
-          </>
+          <UpcomingEventsSection events={events} />
         )}
       </main>
       <Footer />

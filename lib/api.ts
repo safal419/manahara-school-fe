@@ -60,3 +60,12 @@ export async function fetchAbout() {
   const data = await res.json();
   return data;
 }
+
+export async function fetchPopupModal() {
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  if (!baseUrl) throw new Error('Backend URL is not set in environment variables');
+  const res = await fetch(`${baseUrl}/api/popup-modal?populate=*`);
+  if (!res.ok) throw new Error('Failed to fetch popup modal data');
+  const data = await res.json();
+  return data;
+}

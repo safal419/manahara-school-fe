@@ -150,13 +150,15 @@ export default function AdmissionsClientPage() {
                 Join our nurturing educational community. We make the admission
                 process simple and welcoming for all families.
               </p>
-              <Button
-                size="lg"
-                className="hover-glow bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
-              >
-                <PhoneCall className="h-5 w-5 mr-2" />
-                Call Now for Inquiry
-              </Button>
+              <Link href={"/contact"}>
+                <Button
+                  size="lg"
+                  className="hover-glow bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+                >
+                  <PhoneCall className="h-5 w-5 mr-2" />
+                  Call Now for Inquiry
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </section>
