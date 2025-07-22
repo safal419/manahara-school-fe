@@ -18,24 +18,26 @@ import {
   Youtube,
   Send,
 } from "lucide-react";
+import { useRef, useState } from "react";
+import emailjs from "emailjs-com";
 
 const contactInfo = [
   {
     icon: MapPin,
     title: "Address",
-    details: ["Dumakhal, Kathmandu, Nepal"],
+    details: ["Kageshwori Manohara-5, Dumakhal, Kathmandu, Nepal"],
     color: "text-red-500",
   },
   {
     icon: Phone,
     title: "Phone",
-    details: ["+977-1-4153708", "+977-9841234567"],
+    details: ["+977-1-5920777", "+977-9851007281"],
     color: "text-green-500",
   },
   {
     icon: Mail,
     title: "Email",
-    details: ["info@manaharaschool.edu.np", "admission@manaharaschool.edu.np"],
+    details: ["info@manaharaschool.edu.np"],
     color: "text-blue-500",
   },
   {
@@ -50,24 +52,59 @@ const socialLinks = [
   {
     icon: Facebook,
     name: "Facebook",
-    url: "#",
+    url: "https://www.facebook.com/jayaram.sapkota.90",
     color: "hover:text-blue-600",
   },
   {
     icon: Instagram,
     name: "Instagram",
-    url: "#",
+    url: "https://www.instagram.com/manaharaschool/",
     color: "hover:text-pink-600",
   },
   {
     icon: Youtube,
     name: "YouTube",
-    url: "#",
+    url: "https://www.youtube.com/@manaharaschool9553",
     color: "hover:text-red-600",
   },
 ];
 
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!;
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
+
 export default function ContactPage() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSending(true);
+    setSuccess(null);
+    setError(null);
+
+    emailjs
+      .sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        formRef.current!,
+        EMAILJS_PUBLIC_KEY
+      )
+      .then(
+        () => {
+          setSuccess("Message sent successfully!");
+          setSending(false);
+          if (formRef.current) formRef.current.reset();
+        },
+        () => {
+          setError("Failed to send message. Please try again.");
+          setSending(false);
+        }
+      );
+  };
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -162,20 +199,28 @@ export default function ContactPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form className="space-y-6">
+                    <form
+                      ref={formRef}
+                      className="space-y-6"
+                      onSubmit={handleSendEmail}
+                    >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="firstName">First Name</Label>
                           <Input
                             id="firstName"
+                            name="firstName"
                             placeholder="Enter your first name"
+                            required
                           />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="lastName">Last Name</Label>
                           <Input
                             id="lastName"
+                            name="lastName"
                             placeholder="Enter your last name"
+                            required
                           />
                         </div>
                       </div>
@@ -183,14 +228,17 @@ export default function ContactPage() {
                         <Label htmlFor="email">Email</Label>
                         <Input
                           id="email"
+                          name="email"
                           type="email"
                           placeholder="Enter your email"
+                          required
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone Number</Label>
                         <Input
                           id="phone"
+                          name="phone"
                           type="tel"
                           placeholder="Enter your phone number"
                         />
@@ -199,6 +247,7 @@ export default function ContactPage() {
                         <Label htmlFor="subject">Subject</Label>
                         <Input
                           id="subject"
+                          name="subject"
                           placeholder="What is this regarding?"
                         />
                       </div>
@@ -206,14 +255,29 @@ export default function ContactPage() {
                         <Label htmlFor="message">Message</Label>
                         <Textarea
                           id="message"
+                          name="message"
                           placeholder="Tell us more about your inquiry..."
                           rows={5}
+                          required
                         />
                       </div>
-                      <Button type="submit" className="w-full" size="lg">
-                        Send Message
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        size="lg"
+                        disabled={sending}
+                      >
+                        {sending ? "Sending..." : "Send Message"}
                         <Send className="ml-2 h-5 w-5" />
                       </Button>
+                      {success && (
+                        <p className="text-green-600 mt-2 text-center">
+                          {success}
+                        </p>
+                      )}
+                      {error && (
+                        <p className="text-red-600 mt-2 text-center">{error}</p>
+                      )}
                     </form>
                   </CardContent>
                 </Card>
@@ -299,7 +363,7 @@ export default function ContactPage() {
                         <div>
                           <p className="font-medium">Call us directly</p>
                           <p className="text-sm text-muted-foreground">
-                            +977-1-4153708
+                            +977-1-5920777
                           </p>
                         </div>
                       </div>

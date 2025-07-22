@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -15,6 +16,8 @@ import {
   Heart,
   Clock,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchAbout } from "@/lib/api";
 
 // CMS Integration: All this data should come from CMS
 const facilities = [
@@ -95,7 +98,51 @@ function getTextColor(bg: string) {
   return bg.replace("bg-", "text-");
 }
 
+function getImageUrl(imageObj: any) {
+  if (!imageObj) return "";
+  const formats = imageObj.formats || {};
+  return formats.medium?.url || formats.small?.url || imageObj.url || "";
+}
+
 export default function AboutPageClient() {
+  const [aboutData, setAboutData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAbout()
+      .then((data) => {
+        setAboutData(data.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  // Map all images
+  const aboutImageUrl = getImageUrl(aboutData?.aboutImage);
+  const founderImageUrl = getImageUrl(aboutData?.founderImage);
+  const classroomImageUrl = getImageUrl(aboutData?.classroomImage);
+  const environmentImageUrl = getImageUrl(aboutData?.environmentImage);
+  const cleanWaterImageUrl = getImageUrl(aboutData?.cleanWaterImage);
+  const outdoorPlayImageUrl = getImageUrl(aboutData?.outdoorPlayImage);
+  const libraryImageUrl = getImageUrl(aboutData?.libraryImage);
+  const healthCareImageUrl = getImageUrl(aboutData?.healthCareImage);
+
+  // For ourJourneyImage (array)
+  const ourJourneyImages =
+    Array.isArray(aboutData?.ourJourneryImage) &&
+    aboutData.ourJourneryImage.length > 0
+      ? aboutData.ourJourneryImage.map(getImageUrl)
+      : [];
+
+  // Loader
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -235,7 +282,7 @@ export default function AboutPageClient() {
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                   {/* CMS Integration: School building image should come from CMS */}
                   <Image
-                    src="/about-us.webp"
+                    src={aboutImageUrl || "/placeholder.svg"}
                     alt="Manahara School Building"
                     width={700}
                     height={600}
@@ -372,42 +419,20 @@ export default function AboutPageClient() {
               {/* Photo Collage (Right) */}
               <div className="flex-1 flex justify-center items-center mt-20 w-full">
                 <div className="grid grid-cols-2 grid-rows-2 gap-10 max-w-2xl mx-auto justify-center">
-                  <div className="aspect-square overflow-hidden rounded-2xl shadow-xl">
-                    <Image
-                      src="/cultural-program.jpg"
-                      alt="Cultural Program"
-                      width={600}
-                      height={600}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div className="aspect-square overflow-hidden rounded-2xl shadow-xl">
-                    <Image
-                      src="/sports-day.jpg"
-                      alt="Sports Day"
-                      width={600}
-                      height={600}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div className="aspect-square overflow-hidden rounded-2xl shadow-xl">
-                    <Image
-                      src="/hero-image.jpg"
-                      alt="Founder"
-                      width={600}
-                      height={600}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <div className="aspect-square overflow-hidden rounded-2xl shadow-xl">
-                    <Image
-                      src="/about-us.webp"
-                      alt="School Building"
-                      width={600}
-                      height={600}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
+                  {ourJourneyImages.map((url, idx) => (
+                    <div
+                      key={idx}
+                      className="aspect-square overflow-hidden rounded-2xl shadow-xl"
+                    >
+                      <Image
+                        src={url || "/placeholder.svg"}
+                        alt={`Journey ${idx + 1}`}
+                        width={600}
+                        height={600}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -492,7 +517,10 @@ export default function AboutPageClient() {
                   >
                     {/* CMS Integration: Founder image should come from CMS */}
                     <Avatar className="w-32 h-32 lg:w-40 lg:h-40 ring-4 ring-primary/20">
-                      <AvatarImage src="/jr-sapkota.jpg" alt="Founder" />
+                      <AvatarImage
+                        src={founderImageUrl || "/placeholder.svg"}
+                        alt="Founder"
+                      />
                       <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 bg-clip-text text-transparent">
                         KS
                       </AvatarFallback>
@@ -558,60 +586,181 @@ export default function AboutPageClient() {
               </p>
             </motion.div>
             <div className="space-y-16">
-              {facilities.map((facility, index) => {
-                const isEven = index % 2 === 0;
-                return (
-                  <motion.div
-                    key={facility.title}
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className={`flex flex-col md:flex-row ${
-                      isEven ? "" : "md:flex-row-reverse"
-                    } items-center gap-10 md:gap-16`}
+              {/* Modern Classrooms */}
+              <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                <div className="w-full md:w-1/2 flex justify-center">
+                  <Image
+                    src={classroomImageUrl || "/placeholder.svg"}
+                    alt="Modern Classrooms"
+                    width={700}
+                    height={400}
+                    className="object-cover w-full h-full rounded-2xl shadow-xl"
+                  />
+                </div>
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  {/* Icon in a circle below the image and above the title */}
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facilities[0].iconBg}`}
+                    style={{ zIndex: 2 }}
                   >
-                    {/* Image/Illustration */}
-                    <div className="w-full md:w-1/2 flex justify-center">
-                      <div
-                        style={{
-                          aspectRatio: "16/9",
-                          width: "100%",
-                          maxWidth: "700px",
-                          minHeight: "280px",
-                          overflow: "hidden",
-                          boxShadow: "0 4px 24px 0 rgba(0,0,0,0.10)",
-                          borderRadius: "40px",
-                          background: "#eee",
-                        }}
-                        className={`bg-white flex items-center justify-center relative`}
-                      >
-                        {/* You can replace this icon with an actual image if you have one for each facility */}
-                        <facility.icon
-                          className="h-40 w-40 text-white opacity-30 absolute inset-0 m-auto"
-                          style={{ color: "white", zIndex: 1 }}
-                        />
-                      </div>
-                    </div>
-                    {/* Card Content */}
-                    <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-                      {/* Icon in a circle below the image and above the title */}
-                      <div
-                        className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facility.iconBg}`}
-                        style={{ zIndex: 2 }}
-                      >
-                        <facility.icon className="w-7 h-7 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
-                        {facility.title}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
-                        {facility.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                    {facilities[0].icon &&
+                      React.createElement(facilities[0].icon, {
+                        className: "w-7 h-7 text-white",
+                      })}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                    {facilities[0].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                    {facilities[0].description}
+                  </p>
+                </div>
+              </div>
+              {/* Safe Environment */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
+                <div className="w-full md:w-1/2 flex justify-center">
+                  <Image
+                    src={environmentImageUrl || "/placeholder.svg"}
+                    alt="Safe Environment"
+                    width={700}
+                    height={400}
+                    className="object-cover w-full h-full rounded-2xl shadow-xl"
+                  />
+                </div>
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facilities[1].iconBg}`}
+                    style={{ zIndex: 2 }}
+                  >
+                    {facilities[1].icon &&
+                      React.createElement(facilities[1].icon, {
+                        className: "w-7 h-7 text-white",
+                      })}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                    {facilities[1].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                    {facilities[1].description}
+                  </p>
+                </div>
+              </div>
+              {/* Clean Water */}
+              <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                <div className="w-full md:w-1/2 flex justify-center">
+                  <Image
+                    src={cleanWaterImageUrl || "/placeholder.svg"}
+                    alt="Clean Water"
+                    width={700}
+                    height={400}
+                    className="object-cover w-full h-full rounded-2xl shadow-xl"
+                  />
+                </div>
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facilities[2].iconBg}`}
+                    style={{ zIndex: 2 }}
+                  >
+                    {facilities[2].icon &&
+                      React.createElement(facilities[2].icon, {
+                        className: "w-7 h-7 text-white",
+                      })}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                    {facilities[2].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                    {facilities[2].description}
+                  </p>
+                </div>
+              </div>
+              {/* Outdoor Play Area */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
+                <div className="w-full md:w-1/2 flex justify-center">
+                  <Image
+                    src={outdoorPlayImageUrl || "/placeholder.svg"}
+                    alt="Outdoor Play Area"
+                    width={700}
+                    height={400}
+                    className="object-cover w-full h-full rounded-2xl shadow-xl"
+                  />
+                </div>
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facilities[3].iconBg}`}
+                    style={{ zIndex: 2 }}
+                  >
+                    {facilities[3].icon &&
+                      React.createElement(facilities[3].icon, {
+                        className: "w-7 h-7 text-white",
+                      })}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                    {facilities[3].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                    {facilities[3].description}
+                  </p>
+                </div>
+              </div>
+              {/* Library */}
+              <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                <div className="w-full md:w-1/2 flex justify-center">
+                  <Image
+                    src={libraryImageUrl || "/placeholder.svg"}
+                    alt="Library"
+                    width={700}
+                    height={400}
+                    className="object-cover w-full h-full rounded-2xl shadow-xl"
+                  />
+                </div>
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facilities[4].iconBg}`}
+                    style={{ zIndex: 2 }}
+                  >
+                    {facilities[4].icon &&
+                      React.createElement(facilities[4].icon, {
+                        className: "w-7 h-7 text-white",
+                      })}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                    {facilities[4].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                    {facilities[4].description}
+                  </p>
+                </div>
+              </div>
+              {/* Health Care */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
+                <div className="w-full md:w-1/2 flex justify-center">
+                  <Image
+                    src={healthCareImageUrl || "/placeholder.svg"}
+                    alt="Health Care"
+                    width={700}
+                    height={400}
+                    className="object-cover w-full h-full rounded-2xl shadow-xl"
+                  />
+                </div>
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-full mb-4 ${facilities[5].iconBg}`}
+                    style={{ zIndex: 2 }}
+                  >
+                    {facilities[5].icon &&
+                      React.createElement(facilities[5].icon, {
+                        className: "w-7 h-7 text-white",
+                      })}
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 flex items-center text-center md:text-left">
+                    {facilities[5].title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-lg text-center md:text-left">
+                    {facilities[5].description}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>

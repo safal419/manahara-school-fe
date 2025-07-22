@@ -45,7 +45,7 @@ export function Footer() {
                 asChild
                 className="border-gray-700"
               >
-                <Link href="#">
+                <Link href="https://www.facebook.com/jayaram.sapkota.90">
                   <Facebook className="h-4 w-4" style={{ color: "#1877F3" }} />
                 </Link>
               </Button>
@@ -55,7 +55,7 @@ export function Footer() {
                 asChild
                 className="border-gray-700"
               >
-                <Link href="#">
+                <Link href="https://www.instagram.com/manaharaschool/">
                   <Instagram className="h-4 w-4" style={{ color: "#E4405F" }} />
                 </Link>
               </Button>
@@ -65,7 +65,7 @@ export function Footer() {
                 asChild
                 className="border-gray-700"
               >
-                <Link href="#">
+                <Link href="https://www.youtube.com/@manaharaschool9553">
                   <Youtube className="h-4 w-4" style={{ color: "#FF0000" }} />
                 </Link>
               </Button>
@@ -91,6 +91,14 @@ export function Footer() {
                   className="text-gray-400 hover:text-primary transition-colors"
                 >
                   Academics
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/admissions"
+                  className="text-gray-400 hover:text-primary transition-colors"
+                >
+                  Admissions
                 </Link>
               </li>
               <li>
@@ -135,14 +143,12 @@ export function Footer() {
               <div className="flex items-start space-x-2">
                 <MapPin className="h-4 w-4 mt-0.5 text-primary" />
                 <span className="text-gray-400">
-                  Devitar Marg, Baba Chowk, Mulpani
-                  <br />
-                  Kathmandu, Nepal
+                  Kageshwori Manohara-5, Dumakhal, Kathmandu, Nepal
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-gray-400">+977-1-4153708</span>
+                <span className="text-gray-400">+977-1-5920777</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-primary" />
@@ -154,8 +160,6 @@ export function Footer() {
                 <Clock className="h-4 w-4 mt-0.5 text-primary" />
                 <span className="text-gray-400">
                   Mon - Fri: 7:00 AM - 4:00 PM
-                  <br />
-                  Sat: 7:00 AM - 12:00 PM
                 </span>
               </div>
             </div>

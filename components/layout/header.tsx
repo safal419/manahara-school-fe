@@ -44,7 +44,7 @@ export function Header() {
             <div className="hidden md:flex items-center space-x-4 text-xs">
               <div className="flex items-center space-x-1">
                 <Phone className="h-3 w-3" />
-                <span>+977-1-4153708</span>
+                <span>+977-1-5920777</span>
               </div>
               <div className="flex items-center space-x-1">
                 <Mail className="h-3 w-3" />
@@ -52,7 +52,7 @@ export function Header() {
               </div>
               <div className="flex items-center space-x-1">
                 <MapPin className="h-3 w-3" />
-                <span>Dumakhal, Kathmandu</span>
+                <span>Kageshwori Manohara-5, Dumakhal, Kathmandu, Nepal</span>
               </div>
             </div>
 
