@@ -69,7 +69,6 @@ export function Footer() {
                   <Youtube className="h-4 w-4" style={{ color: "#FF0000" }} />
                 </Link>
               </Button>
-              {/* TikTok icon is not in lucide-react; you can add a custom SVG or use another icon library if needed */}
             </div>
           </div>
 
