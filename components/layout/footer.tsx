@@ -181,6 +181,20 @@ export function Footer() {
           <p className="text-sm text-gray-400">
             © {new Date().getFullYear()} Manahara School. All rights reserved.
           </p>
+          <div className="text-gray-400  space-y-1 text-center md:text-left">
+            <p>
+              Designed & Developed by{" "}
+              <a
+                href="https://saphalsapkota.com.np"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:underline"
+              >
+                Saphal
+              </a>
+            </p>
+          </div>
+
           <div className="flex space-x-4 mt-4 md:mt-0">
             <Link
               href="/privacy"
