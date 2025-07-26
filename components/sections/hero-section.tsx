@@ -167,7 +167,7 @@ export function HeroSection({ imageUrl }: { imageUrl: string }) {
                 className="text-lg md:text-base px-8 md:px-6 py-4 md:py-3 rounded-full glass border-white/40 text-white hover:bg-white/10 group bg-transparent backdrop-blur-md font-medium"
                 onClick={() =>
                   window.open(
-                    "https://youtu.be/EFYEMqnq3B8?si=lYNAoCmVJncqV7HV",
+                    "https://www.youtube.com/watch?v=xW3knOJBdb8",
                     "_blank"
                   )
                 }
